@@ -1,0 +1,22 @@
+{
+  "name": "proyecto-2-bases-avanzadas",
+  "version": "1.0.0",
+  "description": "Tienda com MongoDB y NodeJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arias95/Proyecto-2-Bases-Avanzadas.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Arias95/Proyecto-2-Bases-Avanzadas/issues"
+  },
+  "homepage": "https://github.com/Arias95/Proyecto-2-Bases-Avanzadas#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}
