@@ -38,4 +38,12 @@ router.post('/login', function (req, res)
         );
 });
 
+router.post('/newOrder', function(req, res) {
+    var newOrder = req.body;
+    var collection = mainDB.collection('ordenes');
+    console.log(newOrder);
+    collection.insert(newOrder);
+    res.json({"Success" : 1});
+});
+
 module.exports = router;
