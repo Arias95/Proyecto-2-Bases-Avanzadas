@@ -1,8 +1,8 @@
 var express = require("express");
 var router = express.Router();
-var MongoClient = require('mongodb').MongoClient; // TODO: NPM install
+var MongoClient = require('mongodb').MongoClient;
 var database = require('./database.js');
-var bodyParser = require("body-parser"); // TODO: NPM install
+var bodyParser = require("body-parser"); 
 
 // ======== DATABASE CONNECTIONS ========
 var mainDB;
@@ -22,9 +22,9 @@ router.use(bodyParser.json());
 router.post('/login', function (req, res)
 {
     var loginInfo = req.body; // Gets user data from request's body.
-    mainDB.collection("cliente").find( // Find user with matching data.
+    mainDB.collection("admin").find( // Find user with matching data.
         {
-        "correo": loginInfo.correo,
+        "correo": loginInfo.id,
         "clave": loginInfo.clave}).toArray(
             function(error, result)
             {
@@ -34,18 +34,10 @@ router.post('/login', function (req, res)
                 } else // User found
                 {
                     // Returns a success signal (1) and its id.
-                    res.json({"result" : 1, "email" : result[0].correo});
+                    res.json({"result" : 1, "id" : result[0].id});
                 }
             }
         );
-});
-
-// Order insertion function: 
-router.post('/newOrder', function(req, res) {
-    var newOrder = req.body; // Gets data from request's body.
-    var collection = mainDB.collection('ordenes');
-    collection.insert(newOrder); // Simple insert.
-    res.json({"Success" : 1}); // Returns success signal.
 });
 
 module.exports = router;
