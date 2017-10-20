@@ -18,10 +18,11 @@ router.use(bodyParser.json());
 
 // ======== ROUTES ========
 
+// Login function:
 router.post('/login', function (req, res)
 {
-    var loginInfo = req.body;
-    mainDB.collection("cliente").find(
+    var loginInfo = req.body; // Gets user data from request's body.
+    mainDB.collection("cliente").find( // Find user with matching data.
         {
         "correo": loginInfo.correo,
         "clave": loginInfo.clave}).toArray(
@@ -32,18 +33,20 @@ router.post('/login', function (req, res)
                     res.json({"result" : 0});
                 } else // User found
                 {
+                    // Returns a positive signal (1) and it's id.
                     res.json({"result" : 1, "email" : result[0].correo});
                 }
             }
         );
 });
 
+// Order insertion function: 
 router.post('/newOrder', function(req, res) {
-    var newOrder = req.body;
+    var newOrder = req.body; // Gets data from request's body.
     var collection = mainDB.collection('ordenes');
     console.log(newOrder);
-    collection.insert(newOrder);
-    res.json({"Success" : 1});
+    collection.insert(newOrder); // Simple insert.
+    res.json({"Success" : 1}); // Returns positive signal.
 });
 
 module.exports = router;
