@@ -58,6 +58,56 @@ function updateProduct(productID, params, type) {
             });
             db.close();
         });
+    } else if (type == 'dvd') {
+        MongoClient.connect(database.main, function (err, db) {
+            var collection = db.collection('dvd');
+            collection.updateOne(productID, {
+                $set: {
+                    "nombre": params.nombre,
+                    "descripcion": params.descripcion,
+                    "precio": params.precio
+                }
+            });
+            db.close();
+        });
+    } else if (type == 'appliance') {
+        MongoClient.connect(database.main, function (err, db) {
+            var collection = db.collection('electrodomestico');
+            collection.updateOne(productID, {
+                $set: {
+                    "nombre": params.nombre,
+                    "descripcion": params.descripcion,
+                    "precio": params.precio,
+                    "color": params.color,
+                    "voltaje": params.voltaje,
+                    "marca": params.marca
+                }
+            });
+            db.close();
+        });
+    }
+}
+
+function deleteProduct(productID, type) {
+    if (type == 'libro') {
+        MongoClient.connect(database.main, function (err, db) {
+            var collection = db.collection('libro');
+            collection.deleteOne({ "codigo": productID });
+            db.close();
+        });
+    } else if (type == 'dvd') {
+        MongoClient.connect(database.main, function (err, db) {
+            var collection = db.collection('dvd');
+            collection.deleteOne({ "codigo": productID });
+            db.close();
+        });
+    } else if (type == 'appliance') {
+        console.log(productID);
+        MongoClient.connect(database.main, function (err, db) {
+            var collection = db.collection('electrodomestico');
+            collection.deleteOne({ "codigo": productID });
+            db.close();
+        });
     }
 }
 
@@ -155,9 +205,43 @@ router.put('/updateBook', function (req, res) {
         "editorial": book.editorial,
         "numpaginas": book.numpaginas
     };
-    //console.log(bookParams.descripcion);
     updateProduct(productID, bookParams, 'libro');
-    res.json({"Success": 1});   
+    res.json({ "Success": 1 });
+});
+
+router.put('/updateDVD', function (req, res) {
+    var dvd = req.body;
+    var productID = { "codigo": dvd.codigo };
+    var dvdParams = {
+        "nombre": dvd.nombre,
+        "descripcion": dvd.descripcion,
+        "precio": dvd.precio
+    };
+    updateProduct(productID, dvdParams, 'dvd');
+    res.json({ "Success": 1 });
+});
+
+router.put('/updateAppliance', function (req, res) {
+    var appliance = req.body;
+    var productID = { "codigo": appliance.codigo };
+    var applianceParams = {
+        "nombre": appliance.nombre,
+        "descripcion": appliance.descripcion,
+        "precio": appliance.precio,
+        "color": appliance.color,
+        "voltaje": appliance.voltaje,
+        "marca": appliance.marca
+    };
+    updateProduct(productID, applianceParams, 'appliance');
+    res.json({ "Success": 1 });
+});
+
+router.delete('/:type/:code', function (req, res) {
+    var type = req.params.type;
+    var code = Number(req.params.code);
+    //console.log(code);
+    deleteProduct(code, type);
+    res.json({ "Success": 1 });
 });
 
 
