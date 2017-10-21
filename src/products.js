@@ -145,7 +145,19 @@ router.post('/addAppliance', function (req, res) {
 
 router.put('/updateBook', function (req, res) {
     var book = req.body;
-    var productID = { "codigo": book };
+    var productID = { "codigo": book.codigo };
+    var bookParams = {
+        "nombre": book.nombre,
+        "descripcion": book.descripcion,
+        "precio": book.precio,
+        "autor": book.autor,
+        "ano": book.ano,
+        "editorial": book.editorial,
+        "numpaginas": book.numpaginas
+    };
+    //console.log(bookParams.descripcion);
+    updateProduct(productID, bookParams, 'libro');
+    res.json({"Success": 1});   
 });
 
 
