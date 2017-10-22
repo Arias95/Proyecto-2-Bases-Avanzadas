@@ -10,42 +10,22 @@ router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 
 // ======== MAIN FUNCTIONS ========
-function addProduct(product, type) {
-    if (type == 'libro') {
-        MongoClient.connect(database.main, function (err, db) {
-            var collection = db.collection('libro');
-            collection.insertOne(product, function (err, r) {
-                test.equal(null, err);
-                test.equal(1, r.insertedCount);
-                db.close();
-            });
+function addProduct(product) {
+    MongoClient.connect(database.main, function (err, db) {
+        var collection = db.collection('Products');
+        collection.insertOne(product, function (err, r) {
+            test.equal(null, err);
+            test.equal(1, r.insertedCount);
+            db.close();
         });
-    } else if (type == 'dvd') {
-        MongoClient.connect(database.main, function (err, db) {
-            var collection = db.collection('dvd');
-            collection.insertOne(product, function (err, r) {
-                test.equal(null, err);
-                test.equal(1, r.insertedCount);
-                db.close();
-            });
-        });
-    } else if (type == 'electrodomestico') {
-        MongoClient.connect(database.main, function (err, db) {
-            var collection = db.collection('electrodomestico');
-            collection.insertOne(product, function (err, r) {
-                test.equal(null, err);
-                test.equal(1, r.insertedCount);
-                db.close();
-            });
-        });
-    }
+    });
 }
 
 function updateProduct(productID, params, type) {
     if (type == 'libro') {
         MongoClient.connect(database.main, function (err, db) {
-            var collection = db.collection('libro');
-            collection.updateOne(productID, {
+            var collection = db.collection('Products');
+            collection.updateOne({ "codigo": productID, "tipo": "libro" }, {
                 $set: {
                     "nombre": params.nombre,
                     "descripcion": params.descripcion,
@@ -60,8 +40,8 @@ function updateProduct(productID, params, type) {
         });
     } else if (type == 'dvd') {
         MongoClient.connect(database.main, function (err, db) {
-            var collection = db.collection('dvd');
-            collection.updateOne(productID, {
+            var collection = db.collection('Products');
+            collection.updateOne({ "codigo": productID, "tipo": "dvd" }, {
                 $set: {
                     "nombre": params.nombre,
                     "descripcion": params.descripcion,
@@ -72,8 +52,8 @@ function updateProduct(productID, params, type) {
         });
     } else if (type == 'appliance') {
         MongoClient.connect(database.main, function (err, db) {
-            var collection = db.collection('electrodomestico');
-            collection.updateOne(productID, {
+            var collection = db.collection('Products');
+            collection.updateOne({ "codigo": productID, "tipo": "electrodomestico" }, {
                 $set: {
                     "nombre": params.nombre,
                     "descripcion": params.descripcion,
@@ -91,21 +71,22 @@ function updateProduct(productID, params, type) {
 function deleteProduct(productID, type) {
     if (type == 'libro') {
         MongoClient.connect(database.main, function (err, db) {
-            var collection = db.collection('libro');
-            collection.deleteOne({ "codigo": productID });
+            var collection = db.collection('Products');
+            collection.deleteOne({ "codigo": productID, "tipo": "libro" });
             db.close();
         });
     } else if (type == 'dvd') {
         MongoClient.connect(database.main, function (err, db) {
-            var collection = db.collection('dvd');
-            collection.deleteOne({ "codigo": productID });
+            var collection = db.collection('Products');
+            collection.deleteOne({ "codigo": productID, "tipo": "dvd" });
             db.close();
         });
     } else if (type == 'appliance') {
         console.log(productID);
         MongoClient.connect(database.main, function (err, db) {
-            var collection = db.collection('electrodomestico');
-            collection.deleteOne({ "codigo": productID });
+            console.log(productID);
+            var collection = db.collection('Products');
+            collection.deleteOne({ "codigo": productID, "tipo": "electrodomestico" });
             db.close();
         });
     }
@@ -116,24 +97,24 @@ router.get('/:type', function (req, res) {
     var type = req.params.type;
     if (type == 'libros') {
         MongoClient.connect(database.main, function (err, db) {
-            var collection = db.collection('libro');
-            collection.find({}).toArray(function (error, result) {
+            var collection = db.collection('Products');
+            collection.find({ "tipo": "libro" }).toArray(function (error, result) {
                 db.close();
                 res.json(result);
             });
         });
     } else if (type == 'dvd') {
         MongoClient.connect(database.main, function (err, db) {
-            var collection = db.collection('dvd');
-            collection.find({}).toArray(function (error, result) {
+            var collection = db.collection('Products');
+            collection.find({ "tipo": "dvd" }).toArray(function (error, result) {
                 db.close();
                 res.json(result);
             });
         });
-    } else if (type == 'appliances') {
+    } else if (type == 'electrodomesticos') {
         MongoClient.connect(database.main, function (err, db) {
-            var collection = db.collection('electrodomestico');
-            collection.find({}).toArray(function (error, result) {
+            var collection = db.collection('Products');
+            collection.find({ "tipo": "electrodomestico" }).toArray(function (error, result) {
                 db.close();
                 res.json(result);
             });
@@ -148,24 +129,24 @@ router.get('/:type/:id', function (req, res) {
     var code = Number(req.params.id);
     if (type == 'libros') {
         MongoClient.connect(database.main, function (err, db) {
-            var collection = db.collection('libro');
-            collection.find({ "codigo": code }).toArray(function (error, result) {
+            var collection = db.collection('Products');
+            collection.find({ "codigo": code, "tipo": "libro" }).toArray(function (error, result) {
                 db.close();
                 res.json(result);
             });
         });
     } else if (type == 'dvd') {
         MongoClient.connect(database.main, function (err, db) {
-            var collection = db.collection('dvd');
-            collection.find({ "codigo": code }).toArray(function (error, result) {
+            var collection = db.collection('Products');
+            collection.find({ "codigo": code, "tipo": "dvd" }).toArray(function (error, result) {
                 db.close();
                 res.json(result);
             });
         });
     } else if (type == 'appliances') {
         MongoClient.connect(database.main, function (err, db) {
-            var collection = db.collection('electrodomestico');
-            collection.find({ "codigo": code }).toArray(function (error, result) {
+            var collection = db.collection('Products');
+            collection.find({ "codigo": code, "tipo": "electrodomestico" }).toArray(function (error, result) {
                 db.close();
                 res.json(result);
             });
@@ -175,27 +156,15 @@ router.get('/:type/:id', function (req, res) {
     }
 });
 
-router.post('/addBook', function (req, res) {
-    var newBook = req.body;
-    addProduct(newBook, 'libro');
-    res.json({ "Success": 1 });
-});
-
-router.post('/addDVD', function (req, res) {
-    var newDVD = req.body;
-    addProduct(newDVD, 'dvd');
-    res.json({ "Success": 1 });
-});
-
-router.post('/addAppliance', function (req, res) {
-    var newAppliance = req.body;
-    addProduct(newAppliance, 'electrodomestico');
+router.post('/addProduct', function (req, res) {
+    var newProduct = req.body;
+    addProduct(newProduct);
     res.json({ "Success": 1 });
 });
 
 router.put('/updateBook', function (req, res) {
     var book = req.body;
-    var productID = { "codigo": book.codigo };
+    var productID = book.codigo;
     var bookParams = {
         "nombre": book.nombre,
         "descripcion": book.descripcion,
@@ -211,7 +180,7 @@ router.put('/updateBook', function (req, res) {
 
 router.put('/updateDVD', function (req, res) {
     var dvd = req.body;
-    var productID = { "codigo": dvd.codigo };
+    var productID = dvd.codigo;
     var dvdParams = {
         "nombre": dvd.nombre,
         "descripcion": dvd.descripcion,
@@ -223,7 +192,7 @@ router.put('/updateDVD', function (req, res) {
 
 router.put('/updateAppliance', function (req, res) {
     var appliance = req.body;
-    var productID = { "codigo": appliance.codigo };
+    var productID = appliance.codigo;
     var applianceParams = {
         "nombre": appliance.nombre,
         "descripcion": appliance.descripcion,
