@@ -104,6 +104,25 @@ function getProducts(callback) {
 }
 
 // ======== ROUTES ========
+router.get('/all', function(req, res) {
+    MongoClient.connect(database.main, function(err, db) {
+        var collection = db.collection('Products');
+        collection.find({}).toArray(function (error, result) {
+            res.json(result);
+        });
+    });
+});
+
+router.get('/all/:code', function(req, res) {
+    var code = Number(req.params.code);
+    MongoClient.connect(database.main, function(err, db) {
+        var collection = db.collection('Products');
+        collection.find({"codigo": code}).toArray(function (error, result) {
+            res.json(result);
+        });
+    });
+});
+
 router.get('/', function (req, res) {
     getProducts(function(data) {
         var listRes = [];

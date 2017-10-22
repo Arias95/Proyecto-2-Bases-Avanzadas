@@ -59,7 +59,7 @@ function extractProducts(orders) {
 }
 
 function removeProduct(product, list) {
-    var result = list.filter(function(a) {
+    var result = list.filter(function (a) {
         return a !== product
     });
 
@@ -90,7 +90,7 @@ function countProducts(products) {
         };
         result.push(mentions);
         productCount = removeProduct(current, productCount);
-    } 
+    }
 
     return result;
 }
@@ -108,7 +108,6 @@ function findHigher(products) {
 
 function getTop(orders) {
     var products = extractProducts(orders);
-    console.log(products);
     var counts = countProducts(products);
     var count = 0;
     var top = [];
@@ -125,6 +124,25 @@ function getTop(orders) {
 }
 
 // ======== ROUTES ========
+router.get('/orders', function(req, res) {
+    MongoClient.connect(database.main, function(err, db) {
+        var collection = db.collection('Orders');
+        collection.find({}).toArray(function (error, result) {
+            res.json(result);
+        });
+    });
+});
+
+router.get('/orders/:id', function(req, res) {
+    var id = req.params.id;
+    MongoClient.connect(database.main, function(err, db) {
+        var collection = db.collection('Orders');
+        collection.find({"cliente": id}).toArray(function (error, result) {
+            res.json(result);
+        });
+    });
+});
+
 router.get('/range/:id', function (req, res) {
     var user = req.params.id;
     retrieveOrders(user, function (data) {
@@ -137,8 +155,8 @@ router.get('/range/:id', function (req, res) {
     });
 });
 
-router.get('/top', function(req, res) {
-    retrieveAllOrders(function(data) {
+router.get('/top', function (req, res) {
+    retrieveAllOrders(function (data) {
         var top = getTop(data);
         var top3 = {
             "first": top[0],
@@ -147,6 +165,24 @@ router.get('/top', function(req, res) {
         };
 
         res.json(top3);
+    });
+});
+
+router.get('/avg/:id', function (req, res) {
+    var user = req.params.id;
+    retrieveOrders(user, function(data) {
+        var sum = 0;
+        for (var i = 0; i < data.length; i++) {
+            var total = 0;
+            var articles = data[i].articulos;
+            for (var j = 0; j < articles.length; j++) {
+                total += articles[j].cantidad;
+            }
+            sum += total;
+        }
+
+        var avg = Math.round(sum / data.length);
+        res.json({"Average": avg});
     });
 });
 

@@ -10,6 +10,25 @@ router.use(bodyParser.json());
 
 // ======== ROUTES ========
 
+router.get('/', function(req, res) {
+    MongoClient.connect(database.main, function(err, db) {
+        var collection = db.collection('Clients');
+        collection.find({}).toArray(function(error, result) {
+            res.json(result);
+        });
+    });
+});
+
+router.get('/:id', function(req, res) {
+    var id = req.params.id;
+    MongoClient.connect(database.main, function(err, db) {
+        var collection = db.collection('Clients');
+        collection.find({"correo": id}).toArray(function(error, result) {
+            res.json(result);
+        });
+    });
+});
+
 // Login function:
 router.post('/login', function (req, res)
 {
