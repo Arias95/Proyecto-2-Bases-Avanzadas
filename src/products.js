@@ -92,7 +92,34 @@ function deleteProduct(productID, type) {
     }
 }
 
+function getProducts(callback) {
+    MongoClient.connect(database.main, function (err, db) {
+        var collection = db.collection('Products');
+        collection.find({}).toArray(function (error, result) {
+            if (error) throw error;
+            db.close();
+            callback(result);
+        });
+    });
+}
+
 // ======== ROUTES ========
+router.get('/', function (req, res) {
+    getProducts(function(data) {
+        var listRes = [];
+        for (var i = 0 ; i < data.length ; i++) {
+            var obj = {
+                "codigo": data[i].codigo,
+                "nombre": data[i].nombre,
+                "precio": data[i].precio
+            };
+            listRes.push(obj);
+        }
+
+        res.json(listRes);
+    });
+});
+
 router.get('/:type', function (req, res) {
     var type = req.params.type;
     if (type == 'libros') {
